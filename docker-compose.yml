@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  fetch:
+    build: .
+    tty: true
+    volumes:
+      - .:/data
