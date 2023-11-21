@@ -6,6 +6,18 @@ def fetch_websites(*urls)
       website = URI.open(url).read
       filename = "#{URI.parse(url).host}.html"
       File.open(filename, 'w') { |file| file.write(website) }
+      # contains regexes for stylesheet, script, and image
+      regexes = [/<link\s[^>]*rel\s*=\s*['"]stylesheet['"][^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>/i, /<script\s[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i, /<[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i]
+      regexes.each do | reg | 
+        assets = website.scan(reg).flatten
+        assets.each do | asset |
+          begin
+          download_asset("#{URI.parse(url).host}_files", asset, File.basename(URI.parse(asset).path))
+          rescue
+            puts "Failed to download #{asset}"
+          end
+        end
+      end
     rescue => exception
       puts "Something went wrong, error message: #{exception.message}"
     end
@@ -26,6 +38,14 @@ def get_metadata(file_path)
     puts "last fetch: #{formatted_date}"
   else 
     puts "File not found"
+  end
+end
+
+def download_asset(folder, url, filename)
+  Dir.mkdir(folder) if !Dir.exist?(folder) 
+  destination_path = File.join(folder, filename)
+  File.open(destination_path, 'wb') do | file |
+    file << URI.open(url).read
   end
 end
 
