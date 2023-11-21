@@ -28,3 +28,9 @@ def get_metadata(file_path)
     puts "File not found"
   end
 end
+
+if ARGV[0] == "--metadata"
+  get_metadata(ARGV[1])
+else
+  fetch_websites(*ARGV[0..-1])
+end
