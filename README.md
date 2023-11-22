@@ -5,7 +5,7 @@ Fetch is a simple application to fetch websites and save them locally for later 
 # Getting Started 
 
 ### Prerequisites
-* Make sure if you already instal docker
+* Make sure if you already install docker
 * Clone this repository
 * Build and run Fetch app with docker compose 
 
@@ -23,7 +23,7 @@ Fetch the website and save its asset locally inside the format
 $ ruby fetch.rb https://autify.com/
 ```
 * filename `[website].html`
-* assets will be stored on folder named `[website]_folder`
+* assets will be stored in a folder named `[website]_folder`
 
 
 ### Show metadata

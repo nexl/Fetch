@@ -12,9 +12,10 @@ def fetch_websites(*urls)
           if line =~ regex
             begin 
               asset_url =  line.match(regex)[1]
-              result = line.gsub(asset_url, "#{website_name}_files/#{File.basename(URI.parse(asset_url).path)}")
-              download_asset("#{website_name}_files", asset_url, File.basename(URI.parse(asset_url).path))
-              file.puts result
+              filename = File.basename(URI.parse(asset_url).path)
+              line_with_local_asset = line.gsub(asset_url, "#{website_name}_files/#{filename}")
+              download_asset("#{website_name}_files", asset_url, filename)
+              file.puts line_with_local_asset
             rescue => exception
               puts "Something went wrong, error message: #{exception.message}"
             end
