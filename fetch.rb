@@ -5,7 +5,11 @@ def fetch_websites(*urls)
     begin
       website = URI.open(url).read
       filename = "#{URI.parse(url).host}.html"
-      File.open(filename, 'w') { |file| file.write(website) }
+      File.open(filename, 'w') do | file |
+        website.each_line do | line |
+          file.puts line
+        end
+      end
       # contains regexes for stylesheet, script, and image
       regexes = [/<link\s[^>]*rel\s*=\s*['"]stylesheet['"][^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>/i, /<script\s[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i, /<[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i]
       regexes.each do | reg | 
