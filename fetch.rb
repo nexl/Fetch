@@ -4,15 +4,16 @@ def fetch_websites(*urls)
   urls.each do | url | 
     begin
       website = URI.open(url).read
-      filename = "#{URI.parse(url).host}.html"
+      website_name = URI.parse(url).host
+      filename = "#{website_name}.html"
       File.open(filename, 'w') do | file |
         website.each_line do | line |
           regex = /<[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i
           if line =~ regex
             begin 
               asset_url =  line.match(regex)[1]
-              result = line.gsub(asset_url, "#{URI.parse(url).host}_files/#{File.basename(URI.parse(asset_url).path)}")
-              download_asset("#{URI.parse(asset_url).host}_files", asset_url, File.basename(URI.parse(asset_url).path))
+              result = line.gsub(asset_url, "#{website_name}_files/#{File.basename(URI.parse(asset_url).path)}")
+              download_asset("#{website_name}_files", asset_url, File.basename(URI.parse(asset_url).path))
               file.puts result
             rescue => exception
               puts "Something went wrong, error message: #{exception.message}"
@@ -35,7 +36,6 @@ def get_metadata(file_path)
     total_images = html_file.scan(/<img/).length
     modification_time = File.mtime(file_path)
     formatted_date = modification_time.strftime("%a %b %d %Y %H:%M %Z")
-    puts "Last modified date of #{file_path}: #{formatted_date}"
     puts "site: #{file_path}"
     puts "num_links: #{total_links}"
     puts "images: #{total_images}"
