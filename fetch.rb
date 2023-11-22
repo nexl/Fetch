@@ -7,18 +7,18 @@ def fetch_websites(*urls)
       filename = "#{URI.parse(url).host}.html"
       File.open(filename, 'w') do | file |
         website.each_line do | line |
-          file.puts line
-        end
-      end
-      # contains regexes for stylesheet, script, and image
-      regexes = [/<link\s[^>]*rel\s*=\s*['"]stylesheet['"][^>]*href\s*=\s*['"]([^'"]*)['"][^>]*>/i, /<script\s[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i, /<[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i]
-      regexes.each do | reg | 
-        assets = website.scan(reg).flatten
-        assets.each do | asset |
-          begin
-          download_asset("#{URI.parse(url).host}_files", asset, File.basename(URI.parse(asset).path))
-          rescue
-            puts "Failed to download #{asset}"
+          regex = /<[^>]*src\s*=\s*['"]([^'"]*)['"][^>]*>/i
+          if line =~ regex
+            begin 
+              asset_url =  line.match(regex)[1]
+              result = line.gsub(asset_url, "#{URI.parse(url).host}_files/#{File.basename(URI.parse(asset_url).path)}")
+              download_asset("#{URI.parse(asset_url).host}_files", asset_url, File.basename(URI.parse(asset_url).path))
+              file.puts result
+            rescue => exception
+              puts "Something went wrong, error message: #{exception.message}"
+            end
+          else 
+            file.puts line
           end
         end
       end
